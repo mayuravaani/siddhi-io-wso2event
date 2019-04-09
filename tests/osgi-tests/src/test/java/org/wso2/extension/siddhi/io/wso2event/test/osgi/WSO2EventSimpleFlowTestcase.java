@@ -80,7 +80,7 @@ public class WSO2EventSimpleFlowTestcase {
                         .versionAsInProject()),
                 copyOSGiLibBundle(maven().artifactId("siddhi-map-wso2event").
                         groupId("org.wso2.extension.siddhi.map.wso2event")
-                        .version("4.0.8")),
+                        .version("5.0.0")),
                 carbonDistribution(Paths.get("target", "wso2siddhi-io-wso2event-test-" +
                         System.getProperty("siddhi.io.wso2.version")), "worker")
         };
