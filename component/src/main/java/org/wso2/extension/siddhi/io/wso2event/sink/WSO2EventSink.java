@@ -24,8 +24,11 @@ import io.siddhi.annotation.Parameter;
 import io.siddhi.annotation.util.DataType;
 import io.siddhi.core.config.SiddhiAppContext;
 import io.siddhi.core.exception.ConnectionUnavailableException;
+import io.siddhi.core.stream.ServiceDeploymentInfo;
 import io.siddhi.core.stream.output.sink.Sink;
 import io.siddhi.core.util.config.ConfigReader;
+import io.siddhi.core.util.snapshot.state.State;
+import io.siddhi.core.util.snapshot.state.StateFactory;
 import io.siddhi.core.util.transport.DynamicOptions;
 import io.siddhi.core.util.transport.OptionHolder;
 import io.siddhi.query.api.definition.StreamDefinition;
@@ -112,8 +115,8 @@ public class WSO2EventSink extends Sink {
 
 
     @Override
-    protected void init(StreamDefinition outputStreamDefinition, OptionHolder optionHolder,
-                        ConfigReader sinkConfigReader, SiddhiAppContext siddhiAppContext) {
+    protected StateFactory init(StreamDefinition outputStreamDefinition, OptionHolder optionHolder,
+                                ConfigReader sinkConfigReader, SiddhiAppContext siddhiAppContext) {
         this.authUrl = optionHolder.validateAndGetStaticValue(WSO2EventSinkConstants.WSO2EVENT_SINK_AUTHENTICATION_URL,
                 null);
         this.url = optionHolder.validateAndGetStaticValue(WSO2EventSinkConstants.WSO2EVENT_SINK_URL);
@@ -133,6 +136,7 @@ public class WSO2EventSink extends Sink {
         }
 
         siddhiAppName = siddhiAppContext.getName();
+        return null;
     }
 
     @Override
@@ -169,7 +173,8 @@ public class WSO2EventSink extends Sink {
     }
 
     @Override
-    public void publish(Object payload, DynamicOptions transportOptions) throws ConnectionUnavailableException {
+    public void publish(Object payload, DynamicOptions transportOptions, State state)
+            throws ConnectionUnavailableException {
 
         Event event = (Event) (payload);
         if (streamId != null) {
@@ -207,6 +212,11 @@ public class WSO2EventSink extends Sink {
     @Override
     public Class[] getSupportedInputEventClasses() {
         return new Class[]{Event.class};
+    }
+
+    @Override
+    protected ServiceDeploymentInfo exposeServiceDeploymentInfo() {
+        return null;
     }
 
     @Override

@@ -24,9 +24,12 @@ import io.siddhi.annotation.Parameter;
 import io.siddhi.annotation.util.DataType;
 import io.siddhi.core.config.SiddhiAppContext;
 import io.siddhi.core.exception.ConnectionUnavailableException;
+import io.siddhi.core.stream.ServiceDeploymentInfo;
 import io.siddhi.core.stream.input.source.Source;
 import io.siddhi.core.stream.input.source.SourceEventListener;
 import io.siddhi.core.util.config.ConfigReader;
+import io.siddhi.core.util.snapshot.state.State;
+import io.siddhi.core.util.snapshot.state.StateFactory;
 import io.siddhi.core.util.transport.OptionHolder;
 import org.wso2.carbon.databridge.commons.Event;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
@@ -62,15 +65,16 @@ public class WSO2EventSource extends Source {
     private String streamId;
 
     @Override
-    public void init(SourceEventListener sourceEventListener, OptionHolder optionHolder, String[] strings,
-                     ConfigReader configReader, SiddhiAppContext siddhiAppContext) {
+    public StateFactory init(SourceEventListener sourceEventListener, OptionHolder optionHolder, String[] strings,
+                             ConfigReader configReader, SiddhiAppContext siddhiAppContext) {
 
         this.sourceEventListener = sourceEventListener;
         this.optionHolder = optionHolder;
+        return null;
     }
 
     @Override
-    public void connect(ConnectionCallback connectionCallback) throws ConnectionUnavailableException {
+    public void connect(ConnectionCallback connectionCallback, State state) throws ConnectionUnavailableException {
 
         streamId = optionHolder.validateAndGetStaticValue(WSO2EventSourceConstants.SOURCE_STREAM_ID, null);
         if (!WSO2EventSourceDataHolder.isDatabridgeActivated()) {
@@ -105,6 +109,12 @@ public class WSO2EventSource extends Source {
         WSO2EventSourceRegistrationManager.getDataBridgeStreamStore().addStreamDefinition(streamDefinition);
         WSO2EventSourceRegistrationManager.registerEventConsumer(streamId, sourceEventListener);
     }
+
+    @Override
+    protected ServiceDeploymentInfo exposeServiceDeploymentInfo() {
+        return null;
+    }
+
 
     @Override
     public Class[] getOutputEventClasses() {
